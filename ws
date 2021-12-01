@@ -820,7 +820,6 @@ auth-user-pass
 auth none
 auth-nocache
 cipher none
-keysize 0
 comp-lzo
 setenv CLIENT_CERT 0
 reneg-sec 0
@@ -853,7 +852,6 @@ auth-user-pass
 auth none
 auth-nocache
 cipher none
-keysize 0
 comp-lzo
 setenv CLIENT_CERT 0
 reneg-sec 0
@@ -883,7 +881,6 @@ auth-user-pass
 auth none
 auth-nocache
 cipher none
-keysize 0
 comp-lzo
 setenv CLIENT_CERT 0
 reneg-sec 0
@@ -919,7 +916,6 @@ auth-user-pass
 auth none
 auth-nocache
 cipher none
-keysize 0
 comp-lzo
 setenv CLIENT_CERT 0
 reneg-sec 0
@@ -954,7 +950,6 @@ auth-user-pass
 auth none
 auth-nocache
 cipher none
-keysize 0
 comp-lzo
 setenv CLIENT_CERT 0
 reneg-sec 0
