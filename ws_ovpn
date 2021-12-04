@@ -1043,17 +1043,17 @@ function ConfStartup(){
  # For cron commands, visit https://crontab.guru
  timedatectl set-timezone Asia/Manila
      #write out current crontab
-     crontab -l > mycron
+     #crontab -l > mycron
      #echo new cron into cron file
-     echo -e "0 3 * * * /sbin/reboot >/dev/null 2>&1" >> mycron
+     #echo -e "0 3 * * * /sbin/reboot >/dev/null 2>&1" >> mycron
 
      #install new cron file
-     crontab mycron
-     service cron restart
-     echo '0 3 * * * /sbin/reboot >/dev/null 2>&1' >> /etc/cron.d/mycron
+     #crontab mycron
+     #service cron restart
+     #echo '0 3 * * * /sbin/reboot >/dev/null 2>&1' >> /etc/cron.d/mycron
 
      #removing cron
-     service cron restart
+     #service cron restart
  # Creating directory for startup script
  rm -rf /etc/juans
  mkdir -p /etc/juans
