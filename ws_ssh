@@ -323,47 +323,8 @@ function InsOpenVPN(){
  rm -rf /etc/openvpn/*
 
  # Creating server.conf, ca.crt, server.crt and server.key
- cat <<'myOpenVPNconf1' > /etc/openvpn/server_tcp.conf
-# XAMScript
 
-port MyOvpnPort3
-dev tun
-proto tcp
-ca /etc/openvpn/ca.crt
-cert /etc/openvpn/xbarts.crt
-key /etc/openvpn/xbarts.key
-dh none
-persist-tun
-persist-key
-persist-remote-ip
-cipher none
-ncp-disable
-auth none
-comp-lzo
-tun-mtu 1500
-reneg-sec 0
-plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
-verify-client-cert none
-username-as-common-name
-max-clients 4000
-topology subnet
-server 172.16.0.0 255.255.0.0
-push "redirect-gateway def1"
-keepalive 5 60
-status /etc/openvpn/tcp_stats.log
-log /etc/openvpn/tcp.log
-verb 2
-script-security 2
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
-push "dhcp-option DNS 1.0.0.1"
-push "dhcp-option DNS 1.1.1.1"
-push "dhcp-option DNS 8.8.4.4"
-push "dhcp-option DNS 8.8.8.8"
-duplicate-cn
-myOpenVPNconf1
-
-cat <<'myOpenVPNconf3' > /etc/openvpn/server_tcp2.conf
+cat <<'myOpenVPNconf3' > /etc/openvpn/server_tcp.conf
 # XAMScript
 
 port MyOvpnPort1
@@ -402,46 +363,6 @@ push "dhcp-option DNS 8.8.4.4"
 push "dhcp-option DNS 8.8.8.8"
 duplicate-cn
 myOpenVPNconf3
-
-cat <<'myOpenVPNconf4' > /etc/openvpn/server_tcp3.conf
-# XAMScript
-
-port MyOvpnPort4
-dev tun
-proto tcp
-ca /etc/openvpn/ca.crt
-cert /etc/openvpn/xbarts.crt
-key /etc/openvpn/xbarts.key
-dh none
-persist-tun
-persist-key
-persist-remote-ip
-cipher none
-ncp-disable
-auth none
-comp-lzo
-tun-mtu 1500
-reneg-sec 0
-plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
-verify-client-cert none
-username-as-common-name
-max-clients 4000
-topology subnet
-server 172.19.0.0 255.255.0.0
-push "redirect-gateway def1"
-keepalive 5 60
-status /etc/openvpn/tcp_stats.log
-log /etc/openvpn/tcp.log
-verb 2
-script-security 2
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
-push "dhcp-option DNS 1.0.0.1"
-push "dhcp-option DNS 1.1.1.1"
-push "dhcp-option DNS 8.8.4.4"
-push "dhcp-option DNS 8.8.8.8"
-duplicate-cn
-myOpenVPNconf4
 
 cat <<'myOpenVPNconf2' > /etc/openvpn/server_udp.conf
 # XAMScript
@@ -612,8 +533,6 @@ EOF10
 
  # setting openvpn server port
  sed -i "s|MyOvpnPort1|$OpenVPN_Port1|g" /etc/openvpn/server_tcp2.conf
- sed -i "s|MyOvpnPort3|$OpenVPN_Port3|g" /etc/openvpn/server_tcp.conf
- sed -i "s|MyOvpnPort4|$OpenVPN_Port4|g" /etc/openvpn/server_tcp3.conf
  sed -i "s|MyOvpnPort2|$OpenVPN_Port2|g" /etc/openvpn/server_udp.conf
 
  # Generating openvpn dh.pem file using openssl
@@ -635,11 +554,11 @@ fi
 
 
  # Iptables Rule for OpenVPN server
- #PUBLIC_INET="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
- #IPCIDR='10.200.0.0/16'
- #iptables -I FORWARD -s $IPCIDR -j ACCEPT
- #iptables -t nat -A POSTROUTING -o $PUBLIC_INET -j MASQUERADE
- #iptables -t nat -A POSTROUTING -s $IPCIDR -o $PUBLIC_INET -j MASQUERADE
+ PUBLIC_INET="$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)"
+ IPCIDR='10.200.0.0/16'
+ iptables -I FORWARD -s $IPCIDR -j ACCEPT
+ iptables -t nat -A POSTROUTING -o $PUBLIC_INET -j MASQUERADE
+ iptables -t nat -A POSTROUTING -s $IPCIDR -o $PUBLIC_INET -j MASQUERADE
 
  # Installing Firewalld
  apt install firewalld -y
@@ -655,7 +574,6 @@ fi
  firewall-cmd --quiet --permanent --add-service=openvpn
  firewall-cmd --quiet --permanent --add-service=http
  firewall-cmd --quiet --permanent --add-service=https
- firewall-cmd --quiet --permanent --add-service=privoxy
  firewall-cmd --quiet --permanent --add-service=squid
  firewall-cmd --quiet --reload
 
@@ -665,62 +583,19 @@ fi
 
  # Starting OpenVPN server
  systemctl start openvpn@server_tcp
- systemctl start openvpn@server_tcp2
- systemctl start openvpn@server_tcp3
  systemctl start openvpn@server_udp
  systemctl enable openvpn@server_tcp
- systemctl enable openvpn@server_tcp2
- systemctl enable openvpn@server_tcp3
  systemctl enable openvpn@server_udp
  systemctl restart openvpn@server_tcp
- systemctl restart openvpn@server_tcp2
- systemctl restart openvpn@server_tcp3
  systemctl restart openvpn@server_udp
 
 
  # Pulling OpenVPN no internet fixer script
- #wget -qO /etc/openvpn/openvpn.bash "https://raw.githubusercontent.com/Bonveio/BonvScripts/master/openvpn.bash"
- #0chmod +x /etc/openvpn/openvpn.bash
+ wget -qO /etc/openvpn/openvpn.bash "https://raw.githubusercontent.com/Bonveio/BonvScripts/master/openvpn.bash"
+ 0chmod +x /etc/openvpn/openvpn.bash
 }
 
 function InsProxy(){
- # Removing Duplicate privoxy config
- rm -rf /etc/privoxy/config*
-
- # Creating Privoxy server config using cat eof tricks
- cat <<'myPrivoxy' > /etc/privoxy/config
-# My Privoxy Server Config
-user-manual /usr/share/doc/privoxy/user-manual
-confdir /etc/privoxy
-logdir /var/log/privoxy
-filterfile default.filter
-logfile logfile
-listen-address 0.0.0.0:Privoxy_Port1
-listen-address 0.0.0.0:Privoxy_Port2
-toggle 1
-enable-remote-toggle 0
-enable-remote-http-toggle 0
-enable-edit-actions 0
-enforce-blocks 0
-buffer-limit 4096
-enable-proxy-authentication-forwarding 1
-forwarded-connect-retries 1
-accept-intercepted-requests 1
-allow-cgi-request-crunching 1
-split-large-forms 0
-keep-alive-timeout 5
-tolerate-pipelining 1
-socket-timeout 300
-permit-access 0.0.0.0/0 IP-ADDRESS
-myPrivoxy
-
- # Setting machine's IP Address inside of our privoxy config(security that only allows this machine to use this proxy server)
- sed -i "s|IP-ADDRESS|$IPADDR|g" /etc/privoxy/config
-
- # Setting privoxy ports
- sed -i "s|Privoxy_Port1|$Privoxy_Port1|g" /etc/privoxy/config
- sed -i "s|Privoxy_Port2|$Privoxy_Port2|g" /etc/privoxy/config
-
  # I'm setting Some Squid workarounds to prevent Privoxy's overflowing file descriptors that causing 50X error when clients trying to connect to your proxy server(thanks for this trick @homer_simpsons)
  apt remove --purge squid -y
  rm -rf /etc/squid/sq*
@@ -746,19 +621,8 @@ mySquid
  sed -i "s|SquidCacheHelper|$Proxy_Port1|g" /etc/squid/squid.conf
  sed -i "s|SquidCacheHelper|$Proxy_Port2|g" /etc/squid/squid.conf
 
-sudo apt install ziproxy
- cat <<myziproxy > /etc/ziproxy/ziproxy.conf
- Port = ZIPROXY
- UseContentLength = false
- ImageQuality = {30,25,25,20}
-myziproxy
-
- sed -i "s|ZIPROXY|$ZIPROXY|g" /etc/ziproxy/ziproxy.conf
- # Starting Proxy server
  echo -e "Restarting proxy server.."
- systemctl restart privoxy
  systemctl restart squid
- systemctl restart ziproxy
 }
 
 function OvpnConfigs(){
@@ -790,7 +654,7 @@ cat <<EOF152> /var/www/openvpn/GTMConfig.ovpn
 client
 dev tun
 proto tcp
-remote $IPADDR $OpenVPN_Port3
+remote $IPADDR $OpenVPN_Port1
 remote-cert-tls server
 resolv-retry infinite
 nobind
@@ -851,7 +715,7 @@ cat <<EOF160> /var/www/openvpn/XJ-Stories-TCP.ovpn
 client
 dev tun
 proto tcp
-remote $IPADDR $OpenVPN_Port3
+remote $IPADDR $OpenVPN_Port1
 remote-cert-tls server
 resolv-retry infinite
 nobind
@@ -886,7 +750,7 @@ cat <<EOF17> /var/www/openvpn/XJ-GAMES.ovpn
 client
 dev tun
 proto tcp
-remote $IPADDR $OpenVPN_Port3
+remote $IPADDR $OpenVPN_Port1
 remote-cert-tls server
 resolv-retry infinite
 nobind
@@ -1101,7 +965,7 @@ unzip -qq menu.zip
 rm -f menu.zip
 chmod +x ./*
 dos2unix ./* &> /dev/null
-sed -i 's|/etc/squid/squid.conf|/etc/privoxy/config|g' ./*
+sed -i 's|/etc/squid/squid.conf|g' ./*
 sed -i 's|http_port|listen-address|g' ./*
 cd ~
 
@@ -1152,7 +1016,10 @@ function setting() {
 service ssh restart
 service sshd restart
 service dropbear restart
-systemctl daemon-reload
+systemctl restart openvpn@server_tcp.service
+systemctl restart openvpn@server_udp.service
+systemctl restart squid
+systemctl restart stunnel4
 }
 function remove() {
 echo ' ' > .bash_history
@@ -1232,11 +1099,9 @@ remove
  echo -e "========================================" | lolcat
  echo -e " DropbearSSH: $Dropbear_Port1, $Dropbear_Port2" | lolcat
  echo -e "========================================" | lolcat
- echo -e " Privoxy: $Privoxy_Port1, $Privoxy_Port2" | lolcat
- echo -e "========================================" | lolcat
  echo -e " Squid: $Proxy_Port1, $Proxy_Port2" | lolcat
  echo -e "========================================" | lolcat
- echo -e " OpenVPN: $OpenVPN_Port1, $OpenVPN_Port2, $OpenVPN_Port3, $OpenVPN_Port4" | lolcat
+ echo -e " OpenVPN: $OpenVPN_Port1, $OpenVPN_Port2" | lolcat
  echo -e "========================================" | lolcat
  echo -e " NGiNX: $OvpnDownload_Port" | lolcat
  echo -e "========================================" | lolcat
