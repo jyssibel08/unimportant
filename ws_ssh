@@ -1,6 +1,6 @@
 #!/bin/bash
 # VPS Installer
-# Script by XAM
+# Script by XAMJYSS143
 #
 # Illegal selling and redistribution of this script is strictly prohibited
 # Please respect author's Property
@@ -30,25 +30,25 @@ WS_Port2='8080'
 SSH_Banner='https://pastebin.com/raw/H7iNhF7m'
 
 # Dropbear Ports
-Dropbear_Port1='900'
-Dropbear_Port2='990'
+Dropbear_Port1='550'
+Dropbear_Port2='555'
 
 # Stunnel Ports
-Stunnel_Port1='443' # through Dropbear
+Stunnel_Port1='143' # through Dropbear
 Stunnel_Port2='144' # through OpenSSH
-Stunnel_Port3='142' # through OpenVPN
+Stunnel_Port3='443' # through OpenVPN
 
 #ZIPROXY
 ZIPROXY='2898'
 
 Proxy_Port1='8000'
-Proxy_Port2='8118'
+Proxy_Port2='8080'
 
 # OpenVPN Ports
 OpenVPN_Port1='110'
 OpenVPN_Port2='25222'
 OpenVPN_Port3='1194'
-OpenVPN_Port4='69' # take note when you change this port, openvpn sun noload config will not work
+OpenVPN_Port4='69'
 
 # Privoxy Ports (must be 1024 or higher)
 Privoxy_Port1='6969'
@@ -58,18 +58,6 @@ OvpnDownload_Port='86' # Before changing this value, please read this document. 
 
 # Server local time
 MyVPS_Time='Asia/Manila'
-#############################
-
-
-#############################
-#############################
-## All function used for this script
-#############################
-## WARNING: Do not modify or edit anything
-## if you did'nt know what to do.
-## This part is too sensitive.
-#############################
-#############################
  apt-get update
  apt-get upgrade -y
  apt-get install lolcat -y 
@@ -83,10 +71,10 @@ COUNTER="$(curl -4sX GET "https://api.countapi.xyz/hit/BonvScripts/DebianVPS-Ins
 
 IPADDR="$(curl -4skL http://ipinfo.io/ip)"
 
-GLOBAL_API_KEY="60320c3e5c9c277bca1e3721d506a0eb0e10e"
-CLOUDFLARE_EMAIL="jorjanseenearlbade@gmail.com"
-DOMAIN_NAME_TLD="origenesdev.codes"
-DOMAIN_ZONE_ID="db412141e7eda53f113735404d9b77ef"
+GLOBAL_API_KEY="9e648e795c10bf1db1ef42b2366933ba58bf9"
+CLOUDFLARE_EMAIL="javievalde@gmail.com"
+DOMAIN_NAME_TLD="xjvpn.net"
+DOMAIN_ZONE_ID="1278c3c738e6a45e700278559bce2dc9"
 ### DNS hostname / Payload here
 ## Setting variable
 
@@ -1055,13 +1043,12 @@ function ConfStartup(){
      #removing cron
      #service cron restart
  # Creating directory for startup script
- rm -rf /etc/juans
- mkdir -p /etc/juans
- chmod -R 777 /etc/juans
+ rm -rf /etc/xam
+ mkdir -p /etc/xam
+ chmod -R 777 /etc/xam
 
  # Creating startup script using cat eof tricks
- cat <<'EOFSH' > /etc/juans/startup.sh
-#!/bin/bash
+ cat <<'EOFSH' > /etc/xam/startup.sh
 # Setting server local time
 ln -fs /usr/share/zoneinfo/MyVPS_Time /etc/localtime
 
@@ -1077,31 +1064,31 @@ iptables -A INPUT -s $(wget -4qO- http://ipinfo.io/ip) -p tcp -m multiport --dpo
 # Deleting Expired SSH Accounts
 /usr/local/sbin/delete_expired &> /dev/null
 EOFSH
- chmod +x /etc/juans/startup.sh
+ chmod +x /etc/xam/startup.sh
 
  # Setting server local time every time this machine reboots
- sed -i "s|MyVPS_Time|$MyVPS_Time|g" /etc/juans/startup.sh
+ sed -i "s|MyVPS_Time|$MyVPS_Time|g" /etc/xam/startup.sh
 
  #
  rm -rf /etc/sysctl.d/99*
 
  # Setting our startup script to run every machine boots
  echo "[Unit]
-Description=Juans Startup Script
+Description=XAMJYSS143 Startup Script
 Before=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /etc/juans/startup.sh
+ExecStart=/bin/bash /etc/xam/startup.sh
 RemainAfterExit=yes
 
 [Install]
-WantedBy=multi-user.target" > /etc/systemd/system/juans.service
- chmod +x /etc/systemd/system/juans.service
+WantedBy=multi-user.target" > /etc/systemd/system/xam.service
+ chmod +x /etc/systemd/system/xam.service
  systemctl daemon-reload
- systemctl start juans
- systemctl enable juans &> /dev/null
+ systemctl start xam
+ systemctl enable xam &> /dev/null
 
  # Rebooting cron service
  systemctl restart cron
@@ -1123,10 +1110,10 @@ sed -i 's|/etc/squid/squid.conf|/etc/privoxy/config|g' ./*
 sed -i 's|http_port|listen-address|g' ./*
 cd ~
 
-echo 'clear' > /etc/profile.d/juans.sh
-echo 'echo '' > /var/log/syslog' >> /etc/profile.d/juans.sh
-echo 'screenfetch -p -A Android' >> /etc/profile.d/juans.sh
-chmod +x /etc/profile.d/juans.sh
+echo 'clear' > /etc/profile.d/xam.sh
+echo 'echo '' > /var/log/syslog' >> /etc/profile.d/xam.sh
+echo 'screenfetch -p -A Android' >> /etc/profile.d/xam.sh
+chmod +x /etc/profile.d/xam.sh
 
  # Turning Off Multi-login Auto Kill
  rm -f /etc/cron.d/set_multilogin_autokill_lib
@@ -1136,310 +1123,10 @@ chmod +x /etc/profile.d/juans.sh
 function ScriptMessage(){
  echo -e ""
  echo -e " (｡◕‿◕｡) $MyScriptName VPS Installer"
- echo -e " Script created by Bonveio"
- echo -e " Remoded by XAM"
- echo -e ""
+ echo -e "XAMJYSS143"
+ echo -e "COMMAND: menu"
 }
 
-
-function service() {
-cat << PTHON > /usr/sbin/yakult
-#!/usr/bin/python
-import socket, threading, thread, select, signal, sys, time, getopt
-
-# Listen
-LISTENING_ADDR = '0.0.0.0'
-if sys.argv[1:]:
-  LISTENING_PORT = sys.argv[1]
-else:
-  LISTENING_PORT = 80
-
-# Pass
-PASS = ''
-
-# CONST
-BUFLEN = 4096 * 4
-TIMEOUT = 3600
-DEFAULT_HOST = '127.0.0.1:900'
-RESPONSE = 'HTTP/1.1 101 <font color="yellow">XAMJYSSVPN|CoronaSSH</font>\r\n\r\nContent-Length: 104857600000\r\n\r\n'
-
-class Server(threading.Thread):
-    def __init__(self, host, port):
-        threading.Thread.__init__(self)
-        self.running = False
-        self.host = host
-        self.port = port
-        self.threads = []
-        self.threadsLock = threading.Lock()
-        self.logLock = threading.Lock()
-
-    def run(self):
-        self.soc = socket.socket(socket.AF_INET)
-        self.soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.soc.settimeout(2)
-        intport = int(self.port)
-        self.soc.bind((self.host, intport))
-        self.soc.listen(0)
-        self.running = True
-
-        try:
-            while self.running:
-                try:
-                    c, addr = self.soc.accept()
-                    c.setblocking(1)
-                except socket.timeout:
-                    continue
-
-                conn = ConnectionHandler(c, self, addr)
-                conn.start()
-                self.addConn(conn)
-        finally:
-            self.running = False
-            self.soc.close()
-
-    def printLog(self, log):
-        self.logLock.acquire()
-        print log
-        self.logLock.release()
-
-    def addConn(self, conn):
-        try:
-            self.threadsLock.acquire()
-            if self.running:
-                self.threads.append(conn)
-        finally:
-            self.threadsLock.release()
-
-    def removeConn(self, conn):
-        try:
-            self.threadsLock.acquire()
-            self.threads.remove(conn)
-        finally:
-            self.threadsLock.release()
-
-    def close(self):
-        try:
-            self.running = False
-            self.threadsLock.acquire()
-
-            threads = list(self.threads)
-            for c in threads:
-                c.close()
-        finally:
-            self.threadsLock.release()
-
-
-class ConnectionHandler(threading.Thread):
-    def __init__(self, socClient, server, addr):
-        threading.Thread.__init__(self)
-        self.clientClosed = False
-        self.targetClosed = True
-        self.client = socClient
-        self.client_buffer = ''
-        self.server = server
-        self.log = 'Connection: ' + str(addr)
-
-    def close(self):
-        try:
-            if not self.clientClosed:
-                self.client.shutdown(socket.SHUT_RDWR)
-                self.client.close()
-        except:
-            pass
-        finally:
-            self.clientClosed = True
-
-        try:
-            if not self.targetClosed:
-                self.target.shutdown(socket.SHUT_RDWR)
-                self.target.close()
-        except:
-            pass
-        finally:
-            self.targetClosed = True
-
-    def run(self):
-        try:
-            self.client_buffer = self.client.recv(BUFLEN)
-
-            hostPort = self.findHeader(self.client_buffer, 'X-Real-Host')
-
-            if hostPort == '':
-                hostPort = DEFAULT_HOST
-
-            split = self.findHeader(self.client_buffer, 'X-Split')
-
-            if split != '':
-                self.client.recv(BUFLEN)
-
-            if hostPort != '':
-                passwd = self.findHeader(self.client_buffer, 'X-Pass')
-				
-                if len(PASS) != 0 and passwd == PASS:
-                    self.method_CONNECT(hostPort)
-                elif len(PASS) != 0 and passwd != PASS:
-                    self.client.send('HTTP/1.1 400 WrongPass!\r\n\r\n')
-                elif hostPort.startswith('127.0.0.1') or hostPort.startswith('localhost'):
-                    self.method_CONNECT(hostPort)
-                else:
-                    self.client.send('HTTP/1.1 403 Forbidden!\r\n\r\n')
-            else:
-                print '- No X-Real-Host!'
-                self.client.send('HTTP/1.1 400 NoXRealHost!\r\n\r\n')
-
-        except Exception as e:
-            self.log += ' - error: ' + e.strerror
-            self.server.printLog(self.log)
-	    pass
-        finally:
-            self.close()
-            self.server.removeConn(self)
-
-    def findHeader(self, head, header):
-        aux = head.find(header + ': ')
-
-        if aux == -1:
-            return ''
-
-        aux = head.find(':', aux)
-        head = head[aux+2:]
-        aux = head.find('\r\n')
-
-        if aux == -1:
-            return ''
-
-        return head[:aux];
-
-    def connect_target(self, host):
-        i = host.find(':')
-        if i != -1:
-            port = int(host[i+1:])
-            host = host[:i]
-        else:
-            if self.method=='CONNECT':
-                port = 443
-            else:
-                port = sys.argv[1]
-
-        (soc_family, soc_type, proto, _, address) = socket.getaddrinfo(host, port)[0]
-
-        self.target = socket.socket(soc_family, soc_type, proto)
-        self.targetClosed = False
-        self.target.connect(address)
-
-    def method_CONNECT(self, path):
-        self.log += ' - CONNECT ' + path
-
-        self.connect_target(path)
-        self.client.sendall(RESPONSE)
-        self.client_buffer = ''
-
-        self.server.printLog(self.log)
-        self.doCONNECT()
-
-    def doCONNECT(self):
-        socs = [self.client, self.target]
-        count = 0
-        error = False
-        while True:
-            count += 1
-            (recv, _, err) = select.select(socs, [], socs, 3)
-            if err:
-                error = True
-            if recv:
-                for in_ in recv:
-		    try:
-                        data = in_.recv(BUFLEN)
-                        if data:
-			    if in_ is self.target:
-				self.client.send(data)
-                            else:
-                                while data:
-                                    byte = self.target.send(data)
-                                    data = data[byte:]
-
-                            count = 0
-			else:
-			    break
-		    except:
-                        error = True
-                        break
-            if count == TIMEOUT:
-                error = True
-            if error:
-                break
-
-
-def print_usage():
-    print 'Usage: proxy.py -p <port>'
-    print '       proxy.py -b <bindAddr> -p <port>'
-    print '       proxy.py -b 0.0.0.0 -p 80'
-
-def parse_args(argv):
-    global LISTENING_ADDR
-    global LISTENING_PORT
-    
-    try:
-        opts, args = getopt.getopt(argv,"hb:p:",["bind=","port="])
-    except getopt.GetoptError:
-        print_usage()
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print_usage()
-            sys.exit()
-        elif opt in ("-b", "--bind"):
-            LISTENING_ADDR = arg
-        elif opt in ("-p", "--port"):
-            LISTENING_PORT = int(arg)
-
-
-def main(host=LISTENING_ADDR, port=LISTENING_PORT):
-    print "\n:-------PythonProxy-------:\n"
-    print "Listening addr: " + LISTENING_ADDR
-    print "Listening port: " + str(LISTENING_PORT) + "\n"
-    print ":-------------------------:\n"
-    server = Server(LISTENING_ADDR, LISTENING_PORT)
-    server.start()
-    while True:
-        try:
-            time.sleep(2)
-        except KeyboardInterrupt:
-            print 'Stopping...'
-            server.close()
-            break
-
-#######    parse_args(sys.argv[1:])
-if __name__ == '__main__':
-    main()
-
-PTHON
-}
-
-
-function service1() {
-
-cat << END > /lib/systemd/system/yakult.service
-[Unit]
-Description=Yakult
-Documentation=https://google.com
-After=network.target nss-lookup.target
-[Service]
-Type=simple
-User=root
-NoNewPrivileges=true
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-ExecStart=/usr/bin/python -O /usr/sbin/yakult
-ProtectSystem=true
-ProtectHome=true
-RemainAfterExit=yes
-Restart=on-failure
-[Install]
-WantedBy=multi-user.target
-END
-
-}
 
 function BBR() {
 wget -q "https://github.com/yue0706/auto_bbr/raw/main/bbr.sh" && chmod +x bbr.sh && ./bbr.sh
@@ -1471,35 +1158,13 @@ service ssh restart
 service sshd restart
 service dropbear restart
 systemctl daemon-reload
-systemctl enable yakult
-systemctl restart yakult
-systemctl daemon-reload
 }
-#function slowdns() {
-#apt update; apt upgrade -y; rm -rf install; wget https://raw.githubusercontent.com/xamjyss143/slow-dns/main/install; chmod +x install; ./install
-#bash /etc/slowdns/slowdns-ssh
-#startdns
-#}
 function remove() {
 echo ' ' > .bash_history
 history -c
 echo ' ' > /var/log/syslog
 rm -f *
 }
-
-
-
-
-#############################
-#############################
-## Installation Process
-#############################
-## WARNING: Do not modify or edit anything
-## if you did'nt know what to do.
-## This part is too sensitive.
-#############################
-#############################
-
 
  # (For OpenVPN) Checking it this machine have TUN Module, this is the tunneling interface of OpenVPN server
  if [[ ! -e /dev/net/tun ]]; then
@@ -1544,11 +1209,8 @@ fi
  ln -fs /usr/share/zoneinfo/$MyVPS_Time /etc/localtime
 
  echo -e "\033[0;35m Installing BBR...\033[0m"
- service
- service1
  BBR
  ddos
- #slowdns
 setting
 remove
 
@@ -1556,7 +1218,7 @@ remove
  cd ~
 
  # Running sysinfo
- bash /etc/profile.d/juans.sh
+ bash /etc/profile.d/xam.sh
 
  # Showing script's banner message
  ScriptMessage
@@ -1564,35 +1226,38 @@ remove
  # Showing additional information from installating this script
  
  
-systemctl enable openvpn
-systemctl restart openvpn
+systemctl restart openvpn@tcp.service
+systemctl restart openvpn@udp.service
 
- echo -e " Success Installation"
+ echo -e "========================================" | lolcat
+ echo -e " Success Installation" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " Service Ports: " | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " OpenSSH: $SSH_Port1, $SSH_Port2" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " Stunnel: $Stunnel_Port1, $Stunnel_Port2" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " DropbearSSH: $Dropbear_Port1, $Dropbear_Port2" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " Privoxy: $Privoxy_Port1, $Privoxy_Port2" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " Squid: $Proxy_Port1, $Proxy_Port2" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " OpenVPN: $OpenVPN_Port1, $OpenVPN_Port2, $OpenVPN_Port3, $OpenVPN_Port4" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " NGiNX: $OvpnDownload_Port" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " IP Address: $IPADDR" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " DNS: $MYDNS" | lolcat
+ echo -e "========================================" | lolcat
  echo -e ""
- echo -e " Service Ports: "
- echo -e " OpenSSH: $SSH_Port1, $SSH_Port2"
- echo -e " Stunnel: $Stunnel_Port1, $Stunnel_Port2"
- echo -e " DropbearSSH: $Dropbear_Port1, $Dropbear_Port2"
- echo -e " Privoxy: $Privoxy_Port1, $Privoxy_Port2"
- echo -e " Squid: $Proxy_Port1, $Proxy_Port2"
- echo -e " OpenVPN: $OpenVPN_Port1, $OpenVPN_Port2, $OpenVPN_Port3, $OpenVPN_Port4"
- echo -e " NGiNX: $OvpnDownload_Port"
-
-echo -e " IP Address: $IPADDR"
- echo -e " DNS: $MYDNS"
- #echo -ne "\033[1;33mYOUR KEY:\033[0m " && cat /root/server.pub
- #echo -ne "\033[1;33mYOUR NAMESERVER:\033[0m " && cat nameserver.txt
+ echo -e " OpenVPN Configs Download site" | lolcat
+ echo -e "========================================" | lolcat
+ echo -e " http://$IPADDR:$OvpnDownload_Port" | lolcat
+ echo -e "========================================" | lolcat
  echo -e ""
- echo -e " OpenVPN Configs Download site"
- echo -e " http://$IPADDR:$OvpnDownload_Port"
- echo -e ""
- #echo -e "Please RUN this code after installation to finish SLOWDNS installation:"
- #echo -ne "\033[0mcurl -sO https://raw.githubusercontent.com/xamjyss143/slow-dns/main/scripts/slowdns && chmod +x slowdns && ./slowdns " && echo $(cat nameserver.txt /root/server.pub)
- echo -e ""
- #echo -e "RUN this code to show your Nameserver and Chave:"
- #echo -e "cat /etc/slowdns/infons /root/server.pub"
- echo -e ""
- echo -e " [Note] DO NOT RESELL THIS SCRIPT"
 
  # Clearing all logs from installation
  rm -rf /root/.bash_history && history -c && echo '' > /var/log/syslog
