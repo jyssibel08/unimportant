@@ -1219,10 +1219,7 @@ remove
  ScriptMessage
 
  # Showing additional information from installating this script
- 
- 
-systemctl restart openvpn@tcp.service
-systemctl restart openvpn@udp.service
+
 
  echo -e "========================================" | lolcat
  echo -e " Success Installation" | lolcat
